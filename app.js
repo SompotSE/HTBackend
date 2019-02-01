@@ -38,7 +38,8 @@ app.post('/users', function(req, res){
         Fname: req.body.Fname,
         Lname: req.body.Lname,
         Address: req.body.Address,
-        Phonenumber: req.body.Phonenumber
+        Phonenumber: req.body.Phonenumber,
+        Positions: req.body.Positions
     }),
     console.log('test');
     //res.send(User);
