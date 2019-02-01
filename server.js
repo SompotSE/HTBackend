@@ -5,7 +5,8 @@ const bodyParser = require('body-parser');
 const passport = require('passport');
 
 const config = require('./db');
-const PORT = process.env.PORT || 5000;
+const PORT =  5000;
+// const PORT = process.env.PORT || 5000;
 const cors = require('cors');
 const UserRouter = require('./routes/UserRouter')
 const LocationRouter = require('./routes/LocationRouters')
@@ -20,6 +21,11 @@ mongoose.connect(config.DB, { useNewUrlParser: true }).then(
 app.use(cors());
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
+app.use(
+    bodyParser.urlencoded({
+        extended: false
+    })
+)
 
 app.use('/users', UserRouter);
 app.use('/locations', LocationRouter);

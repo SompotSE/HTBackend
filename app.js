@@ -13,11 +13,12 @@ mongoose.connect(config.DB, { useNewUrlParser: true }).then(
     err => { console.log('Can not connect to the database'+ err)}
 );
 
-app.use(passport.initialize());
-require('./passport')(passport);
-
+app.use(cors())
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+
+app.use(passport.initialize());
+require('./passport')(passport);
 
 app.get('/', function(req, res) {
     res.send('hello');
@@ -54,6 +55,7 @@ app.delete('/users/:id', (req, res) => {
         .then(response => res.status(200).json(response.delete(req.params.id)))
         .catch(error => console.error(error));
 });
+
 
 app.listen(PORT, () => {
     console.log(`Server is running on PORT ${PORT}`);
