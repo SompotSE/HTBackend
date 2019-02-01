@@ -26,6 +26,9 @@ const UserSchema = new Schema({
         type: String,
         // required: true
     },
+    Positions: {
+        type: String
+    },
     date: {
         type: Date,
         default: Date.now
