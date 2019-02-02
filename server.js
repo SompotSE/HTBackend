@@ -5,7 +5,7 @@ const bodyParser = require('body-parser');
 const passport = require('passport');
 
 const config = require('./db');
-const PORT =  5000;
+const PORT = 5000;
 // const PORT = process.env.PORT || 5000;
 const cors = require('cors');
 const UserRouter = require('./routes/UserRouter')
@@ -13,13 +13,22 @@ const LocationRouter = require('./routes/LocationRouters')
 const BuildingRouter = require('./routes/BuildingRouter')
 const SenserRouter = require('./routes/SenserRouter')
 
+//-->> start senser 
+var mongojs = require('mongojs')
+var Promise = require('promise')
+var myiotdb = mongojs('HT_Data')
+var dhtdb = mongojs('HT_Data')
+var devid, data, datasize, dataset = ''
+var t, h, mac
+//<<-- end senser
+
 mongoose.connect(config.DB, { useNewUrlParser: true }).then(
-    () => {console.log('Database is connected') },
-    err => { console.log('Can not connect to the database'+ err)}
+    () => { console.log('Database is connected') },
+    err => { console.log('Can not connect to the database' + err) }
 );
 
 app.use(cors());
-app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(
     bodyParser.urlencoded({
@@ -31,6 +40,113 @@ app.use('/users', UserRouter);
 app.use('/locations', LocationRouter);
 app.use('/build', BuildingRouter);
 app.use('/sensers', SenserRouter);
+
+//-->> control read write senser
+app.get('/write/:data', function (req, res) {
+    var strParseWriteReq = JSON.stringify(req.params)
+    var strWriteReq = JSON.parse(strParseWriteReq)
+    data = strWriteReq.data
+    writedata(data, res)
+})
+
+app.get('/read/:datasize', function (req, res) {
+    var strParseReadReq = JSON.stringify(req.params)
+    var strReadReq = JSON.parse(strParseReadReq)
+    datasize = strReadReq.datasize
+    readdata(datasize, res)
+})
+
+/* For DHT write */
+app.get('/writedht/:t/:h/:mac', function (req, res) {
+    var strParseWriteReq = JSON.stringify(req.params)
+    var strWriteReq = JSON.parse(strParseWriteReq)
+    t = strWriteReq.t
+    h = strWriteReq.h
+    mac = strWriteReq.mac
+    writeDHT(t, h, mac, res)
+})
+
+/* For DHT data read */
+app.get('/readdht/:datasize', function (req, res) {
+    var strParseReadReq = JSON.stringify(req.params)
+    var strReadReq = JSON.parse(strParseReadReq)
+    datasize = strReadReq.datasize
+    readDHT(datasize, res)
+})
+
+async function writedata(_data, res) {
+    await writeDataToMongo(_data, res)
+}
+
+function writeDataToMongo(_savedata, res) {
+    return new Promise(function (resolve, reject) {
+        var mywritecollection = myiotdb.collection('dataTest')
+        mywritecollection.insert({
+            data: (_savedata),
+            recordTime: new Date().getTime()
+        }, function (err) {
+            if (err) {
+                console.log(err)
+                res.send(String(err))
+            } else {
+                console.log('Reccord data ok')
+                res.send('Reccord data ok')
+            }
+        })
+    })
+}
+
+async function readdata(_datasize, res) {
+    await readDataFromMongo(_datasize, res)
+}
+
+function readDataFromMongo(_readdatasize, res) {
+    return new Promise(function (resolve, reject) {
+        var myreadcollection = myiotdb.collection('dataTest')
+        myreadcollection.find({}).limit(Number(_readdatasize)).sort({ recordTime: -1 }, function (err, docs) {
+            //console.log(JSON.stringify(docs))
+            res.jsonp(docs)
+        })
+    })
+}
+
+async function writeDHT(_t, _h, mac, res) {
+    await writeDHTtoMongo(_t, _h, mac, res)
+}
+
+function writeDHTtoMongo(_saveT, _saveH, _saveMac, res) {
+    return new Promise(function (resolve, reject) {
+        var dhtwritecollection = dhtdb.collection('dht')
+        dhtwritecollection.insert({
+            t: Number(_saveT),
+            h: Number(_saveH),
+            mac: _saveMac,
+            recordTime: new Date().getTime()
+        }, function (err) {
+            if (err) {
+                console.log(err)
+                res.send(String(err))
+            } else {
+                console.log('record dht data ok')
+                res.send('record dht data ok')
+            }
+        })
+    })
+}
+
+async function readDHT(_datasize, res) {
+    await readDHTFromMongo(_datasize, res)
+}
+
+function readDHTFromMongo(_readdatasize, res) {
+    return new Promise(function (resolve, reject) {
+        var dhtcollection = dhtdb.collection('dht')
+        dhtcollection.find({}).limit(Number(_readdatasize)).sort({ recordTime: -1 }, function (err, docs) {
+            //console.log(JSON.stringify(docs))
+            res.jsonp(docs)
+        })
+    })
+}
 
 app.listen(PORT, () => {
     console.log(`Server is running on PORT ${PORT}`);
