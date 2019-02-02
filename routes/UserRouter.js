@@ -11,6 +11,7 @@ UserRouter.route('/add').post(function (req, res) {
     user.save()
         .then(user => {
             res.json('Server added successfully');
+            console.log(res);
         })
         .catch(err => {
             res.status(400).send("unable to save to database");
@@ -30,7 +31,7 @@ UserRouter.route('/user_list').get(function (req, res) {
 
 UserRouter.route('/login').post(function (req, res) {
     var user = req.body.User_g
-    var pass = req.body.Password
+    var pass = req.body.Password 
     UserModel.findOne({ User_g: user, Password: pass }, (err, result) => {
         if (err) { /* handle err */ }
 
