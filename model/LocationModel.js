@@ -10,6 +10,10 @@ const LocationSchema = new Schema({
         type: String,
         required: true
     },
+    Id_Admin: {
+        type: String,
+        required: true
+    },
     date: {
         type: Date,
         default: Date.now
