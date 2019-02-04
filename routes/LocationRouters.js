@@ -26,6 +26,17 @@ LocationRouter.route('/location_list').get(function (req, res) {
     });
 });
 
+LocationRouter.route('/location/:id').get(function (req, res) {
+    LocationModel.findById(req.params.id, function (err, loca) {
+        if (err) {
+            console.log(err);
+        }
+        else {
+            res.json(loca);
+        }
+    });
+});
+
 LocationRouter.route('/update/:id').post(function(req, res){
     LocationModel.findById(req.params.id, function(err, location){
         if(!location)
