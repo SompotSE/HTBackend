@@ -26,4 +26,21 @@ LocationRouter.route('/location_list').get(function(req, res){
     });
 });
 
+LocationRouter.route('/update/:id').post(function(req, res){
+    LocationModel.findById(req.params.id, function(err, location){
+        if(!location)
+            res.status(404).send("data is not found");
+        else
+            location.Name_Lo = req.body.Name_Lo;
+            location.Address = req.body.Address;
+
+            location.save().then(location => {
+                res.json('Updated!');
+            })
+            .catch(err => {
+                res.status(400).send("Update not possible");
+            });
+    });
+});
+
 module.exports = LocationRouter;
