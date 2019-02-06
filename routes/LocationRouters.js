@@ -54,8 +54,8 @@ LocationRouter.route('/update/:id').post(function(req, res){
     });
 });
 
-LocationRouter.route('/Removelocation').post(function (req, res, _id) {
-    LocationModel.findOneAndDelete(_id, function (err, loca) {
+LocationRouter.route('/Removelocation/:id').post(function (req, res) {
+    LocationModel.findByIdAndDelete(req.params.id , function (err, loca) {
         if (err) {
             res.send(err);
         } else {
