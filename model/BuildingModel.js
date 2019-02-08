@@ -9,6 +9,9 @@ const BuildingSchema = new Schema({
     date: {
         type: Date,
         default: Date.now
+    },
+    Id_Loca: {
+        type: String
     }
 },{
     collection: 'building'
