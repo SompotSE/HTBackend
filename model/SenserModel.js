@@ -26,6 +26,9 @@ const SenserSchema = new Schema({
         type: Number,
         required: true
     },
+    Id_Loca: {
+        type: String
+    },
     date: {
         type: Date,
         default: Date.now
