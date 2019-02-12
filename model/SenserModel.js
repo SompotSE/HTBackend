@@ -26,7 +26,7 @@ const SenserSchema = new Schema({
         type: Number,
         required: true
     },
-    Id_Loca: {
+    Id_Build: {
         type: String
     },
     date: {
