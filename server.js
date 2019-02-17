@@ -13,6 +13,8 @@ const LocationRouter = require('./routes/LocationRouters')
 const BuildingRouter = require('./routes/BuildingRouter')
 const SenserRouter = require('./routes/SenserRouter')
 
+const DHTModel = require('./model/DHTModel');
+
 //-->> start senser 
 var mongojs = require('mongojs')
 var Promise = require('promise')
@@ -74,6 +76,18 @@ app.get('/readdht/:datasize', function (req, res) {
     readDHT(datasize, res)
 })
 
+app.get('/history', function (req, res) {
+    var dhtcollection = dhtdb.collection('dht')
+    dhtcollection.find(function(err, dht){
+        if(err){
+            console.log(err);
+        }
+        else{
+            res.json(dht);
+        } 
+    })
+})
+
 async function writedata(_data, res) {
     await writeDataToMongo(_data, res)
 }
@@ -83,7 +97,7 @@ function writeDataToMongo(_savedata, res) {
         var mywritecollection = myiotdb.collection('dataTest')
         mywritecollection.insert({
             data: (_savedata),
-            recordTime: new Date().getTime()
+            recordTime: new Date().getVarDate().VarDate_typekey()
         }, function (err) {
             if (err) {
                 console.log(err)
@@ -114,25 +128,47 @@ async function writeDHT(_t, _h, mac, res) {
     await writeDHTtoMongo(_t, _h, mac, res)
 }
 
+// function writeDHTtoMongo(_saveT, _saveH, _saveMac, res) {
+//     return new Promise(function (resolve, reject) {
+//         var dhtwritecollection = dhtdb.collection('dht')
+//         dhtwritecollection.insert({
+//             t: Number(_saveT),
+//             h: Number(_saveH),
+//             mac: _saveMac,
+//             recordTime: new Date().getTime()
+//         }, function (err) {
+//             if (err) {
+//                 console.log(err)
+//                 res.send(String(err))
+//             } else {
+//                 console.log('record dht data ok')
+//                 res.send('record dht data ok')
+//             }
+//         })
+//     })
+// }
+
 function writeDHTtoMongo(_saveT, _saveH, _saveMac, res) {
     return new Promise(function (resolve, reject) {
-        var dhtwritecollection = dhtdb.collection('dht')
-        dhtwritecollection.insert({
+        //var dhtwritecollection = dhtdb.collection('dht')
+        const data = {
             t: Number(_saveT),
             h: Number(_saveH),
-            mac: _saveMac,
-            recordTime: new Date().getTime()
-        }, function (err) {
-            if (err) {
-                console.log(err)
-                res.send(String(err))
-            } else {
-                console.log('record dht data ok')
-                res.send('record dht data ok')
-            }
+            mac: _saveMac
+        }
+        const DHT = new DHTModel(data);
+        DHT.save()
+        .then(DHT =>{
+            console.log('record dht data ok')
+            res.send('record dht data ok')
         })
-    })
-}
+        .catch(err =>{
+            console.log(err)
+            res.send(String(err))
+        });
+        })
+ }
+
 
 async function readDHT(_datasize, res) {
     await readDHTFromMongo(_datasize, res)
