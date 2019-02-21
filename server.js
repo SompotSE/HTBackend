@@ -14,6 +14,7 @@ const BuildingRouter = require('./routes/BuildingRouter')
 const SenserRouter = require('./routes/SenserRouter')
 
 const DHTModel = require('./model/DHTModel');
+const WarnModel = require('./model/WarnSenserModel');
 
 //-->> start senser 
 var mongojs = require('mongojs')
@@ -21,7 +22,7 @@ var Promise = require('promise')
 var myiotdb = mongojs('HT_Data')
 var dhtdb = mongojs('HT_Data')
 var devid, data, datasize, dataset = ''
-var t, h, mac
+var t, h, mac , macWarn
 //<<-- end senser
 
 mongoose.connect(config.DB, { useNewUrlParser: true }).then(
@@ -66,6 +67,14 @@ app.get('/writedht/:t/:h/:mac', function (req, res) {
     h = strWriteReq.h
     mac = strWriteReq.mac
     writeDHT(t, h, mac, res)
+})
+
+/* For warn Senser */
+app.get('/warndht/:mac', function (req, res) {
+    var strParseWriteReq = JSON.stringify(req.params)
+    var strWriteReq = JSON.parse(strParseWriteReq)
+    macWarn = strWriteReq.mac
+    warnDHT(macWarn, res)
 })
 
 /* For DHT data read */
@@ -161,6 +170,30 @@ function writeDHTtoMongo(_saveT, _saveH, _saveMac, res) {
         .then(DHT =>{
             console.log('record dht data ok')
             res.send('record dht data ok')
+        })
+        .catch(err =>{
+            console.log(err)
+            res.send(String(err))
+        });
+        })
+ }
+
+ async function warnDHT(macWarn, res) {
+    await warnDHTtoMongo(macWarn, res)
+}
+
+function warnDHTtoMongo(_savemacWarn, res) {
+    return new Promise(function (resolve, reject) {
+        var _Message = ("ไม่สามารถรับค่าจากเซนเซอร์ได้")
+        const data = {
+            Message: _Message,
+            Id_MAC: _savemacWarn
+        }
+        const Warn = new WarnModel(data);
+        Warn.save()
+        .then(Warn =>{
+            console.log('record warn data ok')
+            res.send('record warn data ok')
         })
         .catch(err =>{
             console.log(err)
