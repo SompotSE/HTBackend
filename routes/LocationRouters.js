@@ -85,9 +85,11 @@ LocationRouter.route('/Removelocation/:id').post(function (req, res) {
                                             for(let z = 0; z < senser.length; z++)
                                             {
                                                 var id_build = senser[z].Id_Build;
-                                                if(id_build === build[i]._id)
+                                                // console.log(id_build)
+                                                // console.log(build[i]._id)
+                                                if(id_build == build[i]._id)
                                                 {
-                                                    console.log(senser[z]._id)
+                                                    // console.log(senser[z]._id)
                                                     SenserModel.findByIdAndDelete(senser[z]._id, function(err, senser1){
                                                         if (err) {
                                                             res.send(err);

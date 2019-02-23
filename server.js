@@ -15,6 +15,8 @@ const SenserRouter = require('./routes/SenserRouter')
 
 const DHTModel = require('./model/DHTModel');
 const WarnModel = require('./model/WarnSenserModel');
+const WarnTempHumidModel = require('./model/WarnTempHumid')
+const SenserModel = require('./model/SenserModel')
 
 //-->> start senser 
 var mongojs = require('mongojs')
@@ -22,7 +24,7 @@ var Promise = require('promise')
 var myiotdb = mongojs('HT_Data')
 var dhtdb = mongojs('HT_Data')
 var devid, data, datasize, dataset = ''
-var t, h, mac , macWarn
+var t, h, mac, macWarn
 //<<-- end senser
 
 mongoose.connect(config.DB, { useNewUrlParser: true }).then(
@@ -87,13 +89,13 @@ app.get('/readdht/:datasize', function (req, res) {
 
 app.get('/history', function (req, res) {
     var dhtcollection = dhtdb.collection('dht')
-    dhtcollection.find(function(err, dht){
-        if(err){
+    dhtcollection.find(function (err, dht) {
+        if (err) {
             console.log(err);
         }
-        else{
+        else {
             res.json(dht);
-        } 
+        }
     })
 })
 
@@ -160,6 +162,87 @@ async function writeDHT(_t, _h, mac, res) {
 function writeDHTtoMongo(_saveT, _saveH, _saveMac, res) {
     return new Promise(function (resolve, reject) {
         //var dhtwritecollection = dhtdb.collection('dht')
+        SenserModel.find(function (err, senser) {
+            if (err) {
+                console.log(err);
+            }
+            else {
+                var massT, massH
+                for (let i = 0; i < senser.length; i++) {
+                    if (_saveMac === senser[i].Macaddress) {
+                        if (_saveT < senser[i].Temp_Low) {
+                            massT = "อุณหภูมิตำกว่าค่าที่กำหนด"
+                            const warn = {
+                                Message: massT,
+                                Temp: _saveT,
+                                Humdidity: _saveH,
+                                Id_MAC: _saveMac
+                            }
+                            const WarnTH = new WarnTempHumidModel(warn);
+                            WarnTH.save()
+                                .then(TH => {
+                                    console.log('warn dht')
+                                })
+                                .catch(err => {
+                                    console.log(err)
+                                });
+                        }
+                        else if (_saveT > senser[i].Temp_Hight) {
+                            massT = "อุณหภูมิสูงกว่าค่าที่กำหนด"
+                            const warn = {
+                                Message: massT,
+                                Temp: _saveT,
+                                Humdidity: _saveH,
+                                Id_MAC: _saveMac
+                            }
+                            const WarnTH = new WarnTempHumidModel(warn);
+                            WarnTH.save()
+                                .then(TH => {
+                                    console.log('warn dht')
+                                })
+                                .catch(err => {
+                                    console.log(err)
+                                });
+                        }
+
+                        if (_saveH < senser[i].Humdi_Low) {
+                            massH = "ความชื้นตำกว่าค่าที่กำหนด"
+                            const warn = {
+                                Message: massH,
+                                Temp: _saveT,
+                                Humdidity: _saveH,
+                                Id_MAC: _saveMac
+                            }
+                            const WarnTH = new WarnTempHumidModel(warn);
+                            WarnTH.save()
+                                .then(TH => {
+                                    console.log('warn dht')
+                                })
+                                .catch(err => {
+                                    console.log(err)
+                                });
+                        }
+                        else if (_saveH > senser[i].Humdi_Hight) {
+                            massH = "ความชื้นสูงกว่าค่าที่กำหนด"
+                            const warn = {
+                                Message: massH,
+                                Temp: _saveT,
+                                Humdidity: _saveH,
+                                Id_MAC: _saveMac
+                            }
+                            const WarnTH = new WarnTempHumidModel(warn);
+                            WarnTH.save()
+                                .then(TH => {
+                                    console.log('warn dht')
+                                })
+                                .catch(err => {
+                                    console.log(err)
+                                });
+                        }
+                    }
+                }
+            }
+        });
         const data = {
             t: Number(_saveT),
             h: Number(_saveH),
@@ -167,18 +250,18 @@ function writeDHTtoMongo(_saveT, _saveH, _saveMac, res) {
         }
         const DHT = new DHTModel(data);
         DHT.save()
-        .then(DHT =>{
-            console.log('record dht data ok')
-            res.send('record dht data ok')
-        })
-        .catch(err =>{
-            console.log(err)
-            res.send(String(err))
-        });
-        })
- }
+            .then(DHT => {
+                console.log('record dht data ok')
+                res.send('record dht data ok')
+            })
+            .catch(err => {
+                console.log(err)
+                res.send(String(err))
+            });
+    })
+}
 
- async function warnDHT(macWarn, res) {
+async function warnDHT(macWarn, res) {
     await warnDHTtoMongo(macWarn, res)
 }
 
@@ -191,16 +274,16 @@ function warnDHTtoMongo(_savemacWarn, res) {
         }
         const Warn = new WarnModel(data);
         Warn.save()
-        .then(Warn =>{
-            console.log('record warn data ok')
-            res.send('record warn data ok')
-        })
-        .catch(err =>{
-            console.log(err)
-            res.send(String(err))
-        });
-        })
- }
+            .then(Warn => {
+                console.log('record warn data ok')
+                res.send('record warn data ok')
+            })
+            .catch(err => {
+                console.log(err)
+                res.send(String(err))
+            });
+    })
+}
 
 
 async function readDHT(_datasize, res) {
