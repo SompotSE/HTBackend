@@ -12,6 +12,7 @@ const UserRouter = require('./routes/UserRouter')
 const LocationRouter = require('./routes/LocationRouters')
 const BuildingRouter = require('./routes/BuildingRouter')
 const SenserRouter = require('./routes/SenserRouter')
+const DHTRouter = require('./routes/DHTRouter')
 
 const DHTModel = require('./model/DHTModel');
 const WarnModel = require('./model/WarnSenserModel');
@@ -46,6 +47,7 @@ app.use('/users', UserRouter);
 app.use('/locations', LocationRouter);
 app.use('/build', BuildingRouter);
 app.use('/sensers', SenserRouter);
+app.use('/dht', DHTRouter);
 
 //-->> control read write senser
 app.get('/write/:data', function (req, res) {
