@@ -28,6 +28,7 @@ var devid, data, datasize, dataset = ''
 var t, h, mac, macWarn
 //<<-- end senser
 
+
 mongoose.connect(config.DB, { useNewUrlParser: true }).then(
     () => { console.log('Database is connected') },
     err => { console.log('Can not connect to the database' + err) }
@@ -301,6 +302,18 @@ function readDHTFromMongo(_readdatasize, res) {
         })
     })
 }
+
+app.get('/history', function (req, res) {
+    var dhtcollection = dhtdb.collection('dht')
+    dhtcollection.find(function (err, dht) {
+        if (err) {
+            console.log(err);
+        }
+        else {
+            res.json(dht);
+        }
+    })
+})
 
 app.listen(PORT, () => {
     console.log(`Server is running on PORT ${PORT}`);
