@@ -27,8 +27,6 @@ var devid, data, datasize, dataset = ''
 var t, h, mac, macWarn
 //<<-- end senser
 
-//<<-- Line
-app.post('/webhook', (req, res) => res.sendStatus(200))
 
 mongoose.connect(config.DB, { useNewUrlParser: true }).then(
     () => { console.log('Database is connected') },
