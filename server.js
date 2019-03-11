@@ -25,7 +25,7 @@ var Promise = require('promise')
 var myiotdb = mongojs('HT_Data')
 var dhtdb = mongojs('HT_Data')
 var devid, data, datasize, dataset = ''
-var t, h, mac, macWarn
+var t, h, mac, macWarn , massWarn
 //<<-- end senser
 
 
@@ -75,11 +75,12 @@ app.get('/writedht/:t/:h/:mac', function (req, res) {
 })
 
 /* For warn Senser */
-app.get('/warndht/:mac', function (req, res) {
+app.get('/warndht/:mass/:mac', function (req, res) {
     var strParseWriteReq = JSON.stringify(req.params)
     var strWriteReq = JSON.parse(strParseWriteReq)
+    massWarn = strWriteReq.mass
     macWarn = strWriteReq.mac
-    warnDHT(macWarn, res)
+    warnDHT(massWarn, macWarn, res)
 })
 
 /* For DHT data read */
@@ -170,6 +171,8 @@ function writeDHTtoMongo(_saveT, _saveH, _saveMac, res) {
                 console.log(err);
             }
             else {
+                if(_saveT != 404 && _saveH != 404)
+                {
                 var massT, massH
                 for (let i = 0; i < senser.length; i++) {
                     if (_saveMac === senser[i].Macaddress) {
@@ -245,6 +248,7 @@ function writeDHTtoMongo(_saveT, _saveH, _saveMac, res) {
                     }
                 }
             }
+            }
         });
         const data = {
             t: Number(_saveT),
@@ -264,27 +268,34 @@ function writeDHTtoMongo(_saveT, _saveH, _saveMac, res) {
     })
 }
 
-async function warnDHT(macWarn, res) {
-    await warnDHTtoMongo(macWarn, res)
+async function warnDHT(massWarn, macWarn, res) {
+    await warnDHTtoMongo(massWarn, macWarn, res)
 }
 
-function warnDHTtoMongo(_savemacWarn, res) {
+function warnDHTtoMongo(_savemassWarn, _savemacWarn, res) {
     return new Promise(function (resolve, reject) {
-        var _Message = ("ไม่สามารถรับค่าจากเซนเซอร์ได้")
-        const data = {
-            Message: _Message,
-            Id_MAC: _savemacWarn
-        }
-        const Warn = new WarnModel(data);
-        Warn.save()
-            .then(Warn => {
-                console.log('record warn data ok')
-                res.send('record warn data ok')
-            })
-            .catch(err => {
-                console.log(err)
-                res.send(String(err))
-            });
+            var _Message = ("ไม่สามารถรับค่าจากเซนเซอร์ได้")
+            if(_savemassWarn === "ConnectSenser")
+            {
+                _Message = ("สามารถรับค่าจากเซนเซอร์ได้")
+            } else if(_savemassWarn === "NoConnectSenser")
+            {
+                _Message = ("ไม่สามารถรับค่าจากเซนเซอร์ได้")
+            }
+            const data = {
+                Message: _Message,
+                Id_MAC: _savemacWarn
+            }
+            const Warn = new WarnModel(data);
+            Warn.save()
+                .then(Warn => {
+                    console.log('record warn data ok')
+                    res.send('record warn data ok')
+                })
+                .catch(err => {
+                    console.log(err)
+                    res.send(String(err))
+                });
     })
 }
 
