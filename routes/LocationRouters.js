@@ -5,6 +5,7 @@ const LocationRouter = express.Router();
 const LocationModel = require('../model/LocationModel');
 const BuildingModel = require('../model/BuildingModel');
 const SenserModel = require('../model/SenserModel');
+const AuthorizeModel = require('../model/AuthorizeModel');
 
 LocationRouter.route('/add').post(function (req, res) {
     const loca = new LocationModel(req.body);
@@ -96,6 +97,29 @@ LocationRouter.route('/Removelocation/:id').post(function (req, res) {
                                                         }
                                                         else
                                                         {
+                                                            AuthorizeModel.find(function (err, authorize){
+                                                                if(err){
+                                                                    console.log(err);
+                                                                }
+                                                                else {
+                                                                    for(let y = 0 ; y < authorize.length; y++)
+                                                                    {
+                                                                        var key = authorize[y].Key_Room;
+                                                                        if(key == senser[z].Key_Room)
+                                                                        {
+                                                                            AuthorizeModel.findByIdAndDelete(authorize[y]._id, function(err, authorize1){
+                                                                                if (err) {
+                                                                                    res.send(err);
+                                                                                }
+                                                                                else
+                                                                                {
+                                                                                    console.log('Delete Authorize in this building')
+                                                                                }
+                                                                            });
+                                                                        }
+                                                                    }
+                                                                }
+                                                            });
                                                             console.log('Delete Senser in this building')
                                                         }
                                                     });

@@ -26,6 +26,10 @@ const SenserSchema = new Schema({
         type: Number,
         required: true
     },
+    Key_Room: {
+        type: String,
+        required: true
+    },
     Id_Build: {
         type: String
     },

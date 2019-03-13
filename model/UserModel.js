@@ -29,6 +29,9 @@ const UserSchema = new Schema({
     Positions: {
         type: String
     },
+    Id_line: {
+        type: String
+    },
     date: {
         type: Date,
         default: Date.now

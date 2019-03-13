@@ -4,6 +4,7 @@ const BuildingRouter = express.Router();
 
 const BuildingModel = require('../model/BuildingModel');
 const SenserModel = require('../model/SenserModel');
+const AuthorizeModel = require('../model/AuthorizeModel');
 
 BuildingRouter.route('/add').post(function(req, res){
     const build = new BuildingModel(req.body);
@@ -77,6 +78,29 @@ BuildingRouter.route('/Removebuild/:id').post(function (req, res) {
                                 }
                                 else
                                 {
+                                    AuthorizeModel.find(function (err, authorize){
+                                        if(err){
+                                            console.log(err);
+                                        }
+                                        else {
+                                            for(let i = 0 ; i < authorize.length; i++)
+                                            {
+                                                var key = authorize[i].Key_Room;
+                                                if(key == senser[z].Key_Room)
+                                                {
+                                                    AuthorizeModel.findByIdAndDelete(authorize[i]._id, function(err, authorize1){
+                                                        if (err) {
+                                                            res.send(err);
+                                                        }
+                                                        else
+                                                        {
+                                                            console.log('Delete Authorize in this building')
+                                                        }
+                                                    });
+                                                }
+                                            }
+                                        }
+                                    });
                                     console.log('Delete Senser in this building')
                                 }
                             });

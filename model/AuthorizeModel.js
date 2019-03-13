@@ -1,21 +1,20 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const LineModel = new Schema({
-    IdLine: {
-        type: String,
-        required: true
-    },
-    owner: {
+const AuthorizeSchema = new Schema({
+    Key_Room: {
         type: String,
         required: true
     },
     date: {
         type: Date,
         default: Date.now
+    },
+    Id_User: {
+        type: String
     }
 },{
-    collection: 'line'
+    collection: 'authorize'
 });
 
-module.exports = mongoose.model('line', LineModel);
+module.exports = mongoose.model('authorize', AuthorizeSchema);

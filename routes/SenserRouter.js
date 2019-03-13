@@ -3,6 +3,7 @@ const app = express();
 const SenserRouter = express.Router();
 
 const SenserModel = require('../model/SenserModel');
+const AuthorizeModel = require('../model/AuthorizeModel');
 
 SenserRouter.route('/add').post(function(req, res){
     const senser = new SenserModel(req.body);
@@ -63,6 +64,29 @@ SenserRouter.route('/Removesenser/:id').post(function (req, res) {
         if (err) {
             res.send(err);
         } else {
+            AuthorizeModel.find(function (err, authorize){
+                if(err){
+                    console.log(err);
+                }
+                else {
+                    for(let z = 0 ; z < authorize.length; z++)
+                    {
+                        var key = authorize[z].Key_Room;
+                        if(key == senser.Key_Room)
+                        {
+                            AuthorizeModel.findByIdAndDelete(authorize[z]._id, function(err, authorize1){
+                                if (err) {
+                                    res.send(err);
+                                }
+                                else
+                                {
+                                    console.log('Delete Authorize in this building')
+                                }
+                            });
+                        }
+                    }
+                }
+            });
             res.json("Senser has been Deleted")
             console.log('send it')
         }
