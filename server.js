@@ -3,6 +3,7 @@ const app = express();
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const passport = require('passport');
+const request = require('request')
 
 const config = require('./db');
 const PORT = 5000;
@@ -13,6 +14,7 @@ const LocationRouter = require('./routes/LocationRouters')
 const BuildingRouter = require('./routes/BuildingRouter')
 const SenserRouter = require('./routes/SenserRouter')
 const DHTRouter = require('./routes/DHTRouter')
+const LineRouter = require('./routes/LineRouter')
 
 const DHTModel = require('./model/DHTModel');
 const WarnModel = require('./model/WarnSenserModel');
@@ -48,6 +50,7 @@ app.use('/locations', LocationRouter);
 app.use('/build', BuildingRouter);
 app.use('/sensers', SenserRouter);
 app.use('/dht', DHTRouter);
+app.use('/line', LineRouter);
 
 //-->> control read write senser
 app.get('/write/:data', function (req, res) {
@@ -192,6 +195,7 @@ function writeDHTtoMongo(_saveT, _saveH, _saveMac, res) {
                                 .catch(err => {
                                     console.log(err)
                                 });
+                            NotiLine(massT)  
                         }
                         else if (_saveT > senser[i].Temp_Hight) {
                             massT = "อุณหภูมิสูงกว่าค่าที่กำหนด"
@@ -209,6 +213,7 @@ function writeDHTtoMongo(_saveT, _saveH, _saveMac, res) {
                                 .catch(err => {
                                     console.log(err)
                                 });
+                            NotiLine(massT)  
                         }
 
                         if (_saveH < senser[i].Humdi_Low) {
@@ -227,6 +232,7 @@ function writeDHTtoMongo(_saveT, _saveH, _saveMac, res) {
                                 .catch(err => {
                                     console.log(err)
                                 });
+                            NotiLine(massH)                              
                         }
                         else if (_saveH > senser[i].Humdi_Hight) {
                             massH = "ความชื้นสูงกว่าค่าที่กำหนด"
@@ -244,6 +250,7 @@ function writeDHTtoMongo(_saveT, _saveH, _saveMac, res) {
                                 .catch(err => {
                                     console.log(err)
                                 });
+                            NotiLine(massH)  
                         }
                     }
                 }
@@ -296,6 +303,7 @@ function warnDHTtoMongo(_savemassWarn, _savemacWarn, res) {
                     console.log(err)
                     res.send(String(err))
                 });
+            NotiLine(_Message)  
     })
 }
 
@@ -314,6 +322,35 @@ function readDHTFromMongo(_readdatasize, res) {
     })
 }
 
+async function NotiLine(Mass, res) {
+    await sentNotiLine(Mass, res)
+}
+
+function sentNotiLine(Mass, res) {
+    return new Promise(function (resolve, reject) {
+        let headers = {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer {+dZVFQMjY/q3tQEFG29T1/UXoG8dZDe2XcK05icq7jBQzyw/VV9Qlri3g4RSo7Kpw+4ji1Ws0QatykTVOCyW7m53XsWqcrcPWf+z8tosm197HtwaO1xCrCzSyB+/H8xTalQLr1uCtO1xfl+ggoIEPAdB04t89/1O/w1cDnyilFU=}'
+        }
+    
+         let body = JSON.stringify({
+            to:  'U3cc788b06af83710155d31f53d94d0c9', 
+            messages: [{
+                type: 'text',
+                text: Mass
+            }]
+        })
+    
+        request.post({
+            url: 'https://api.line.me/v2/bot/message/push ',
+            headers: headers,
+            body: body
+        }, (err, res, body) => {
+            console.log('status = ' + res.statusCode);
+        });
+    })
+}
+
 app.get('/history', function (req, res) {
     var dhtcollection = dhtdb.collection('dht')
     dhtcollection.find(function (err, dht) {
@@ -322,6 +359,28 @@ app.get('/history', function (req, res) {
         }
         else {
             res.json(dht);
+        }
+    })
+})
+
+app.get('/WarnTempHumid', function (req, res) {
+    WarnTempHumidModel.find(function (err, WarnTH) {
+        if (err) {
+            console.log(err);
+        }
+        else {
+            res.json(WarnTH);
+        }
+    })
+})
+
+app.get('/WarnSenser', function (req, res) {
+    WarnModel.find(function (err, WarnSenser) {
+        if (err) {
+            console.log(err);
+        }
+        else {
+            res.json(WarnSenser);
         }
     })
 })
