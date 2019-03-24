@@ -1,5 +1,6 @@
 const express = require('express');
 const app = express();
+
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const passport = require('passport');
@@ -313,10 +314,12 @@ function writeDHTtoMongo(_saveT, _saveH, _saveMac, res) {
                                                                                             console.log(err);
                                                                                         }
                                                                                         else {
+                                                                                            
                                                                                             for (let b = 0; b < user.length; b++) {
                                                                                                 if (authorize[a].Id_User == user[b]._id) {
                                                                                                     if(massT == "อุณหภูมิต่ำกว่าค่าที่กำหนด" || massT == "อุณหภูมิสูงกว่าค่าที่กำหนด")
                                                                                                     {
+                                                                                                        //
                                                                                                         NotiLineTemp(user[b].Id_line, show1[0].Name_Lo, show1[0].Name_Build, show1[0].Position, show1[0].Temp_Hight, show1[0].Temp_Low, _saveT,  massT)
                                                                                                     } 
                                                                                                     if(massH == "ความชื้นต่ำกว่าค่าที่กำหนด" || massH == "ความชื้นสูงกว่าค่าที่กำหนด")
@@ -514,7 +517,7 @@ function sentNotiLineSenser(_id, loca, build, position, Mass, res) {
                     type: 'text',
                     text: 'สถานที่ : ' + loca
                         + '\nอาคาร : ' + build
-                        + '\nต่ำแหน่งที่ติดตั้ง : ' + position
+                        + '\nตำแหน่งที่ติดตั้ง : ' + position
                         + '\nการแจ้งเตือน : ' + Mass
                 }]
         })
@@ -548,7 +551,7 @@ function sentNotiLineTemp(_id, loca, build, position, max_t, min_t, temp, Mass, 
                     type: 'text',
                     text: 'สถานที่ : ' + loca
                         + '\nอาคาร : ' + build
-                        + '\nต่ำแหน่งที่ติดตั้ง : ' + position
+                        + '\nตำแหน่งที่ติดตั้ง : ' + position
                         + '\nอุณหภูมิที่ตั้งค่าไว้ : อุณหภูมิสูงสุด ' + max_t + ' อุณหภูมิต่ำสุด ' + min_t
                         + '\nอุณหภูมิที่วัดได้ : ' + temp
                         + '\nการแจ้งเตือน : ' + Mass
@@ -584,7 +587,7 @@ function sentNotiLineHumi(_id, loca, build, position, max_h, min_h, humi, Mass, 
                     type: 'text',
                     text: 'สถานที่ : ' + loca
                         + '\nอาคาร : ' + build
-                        + '\nต่ำแหน่งที่ติดตั้ง : ' + position
+                        + '\nตำแหน่งที่ติดตั้ง : ' + position
                         + '\nความชื้นที่ตั้งค่าไว้ : ความชื้นสูงสุด ' + max_h + ' ความชื้นต่ำสุด ' + min_h
                         + '\nความชื้นที่วัดได้ : ' + humi
                         + '\nการแจ้งเตือน : ' + Mass
