@@ -2,8 +2,11 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const ImageSchema = new Schema({
-    image: {
-        type: String,
+    Id_Map: {
+        type: String
+    },
+    Id_Build: {
+        type: String
     },
 }, {
         collection: 'image'

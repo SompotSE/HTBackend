@@ -2,30 +2,32 @@ const express = require('express');
 const app = express();
 const ImageRouter = express.Router();
 const ImageModel = require('../model/ImageModel');
-const fs = require("fs")
 
-ImageRouter.route('/add').post(function (req, res) {
+var fs = require('fs');
 
+ImageRouter.route('/up').post(function (req, res) {
     let data = req.body
+    let Id_Build = data.Id_Build
+    const Id_Map = data.img.replace(/^data:([A-Za-z-+/]+);base64,/, '');
+    // fs.writeFile("./uploads/" + name.getSeconds() + "." + "png", base64Data2, "base64", function (err) {
+    //     // console.log(err); // writes out file without error, but it's not a valid image
+    // });
+    console.log(Id_Map.length);
 
-    console.log(data.image.length)
-    var base64Data = data.image.replace(/^data:image\/png;base64,/, "");
-
-    fs.writeFile("out.jpg", base64Data, 'base64', function (err) {
-        console.log(err);
-    });
-
-    // const image = new ImageModel(req.body);
-    // image.save()
-    //     .then(image => {
-    //         res.json('Server added successfully');
-    //         // console.log(image);
-    //     })
-    //     .catch(err => {
-    //         res.status(400).send("unable to save to database");
-    //     });
+    const image = new ImageModel({ Id_Map, Id_Build });
+    image.save()
+        .then(image => {
+            res.json('Server added Map successfully');
+            //console.log(res);
+        })
+    // res.send("ok");
+    // console.log(data.img)
 });
 
+// ImageRouter.route('/show').get(function (req, res) {
+//     res.sendFile(__dirname + '/testcode');
+
+// });
 
 
 

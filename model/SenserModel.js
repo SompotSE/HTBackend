@@ -4,31 +4,24 @@ const Schema = mongoose.Schema;
 const SenserSchema = new Schema({
     Position: {
         type: String,
-        required: true
     },
     Macaddress: {
         type: String,
-        required: true
     },
     Temp_Low: {
         type: Number,
-        required: true
     },
     Temp_Hight: {
         type: Number,
-        required: true
     },
     Humdi_Low: {
         type: Number,
-        required: true
     },
     Humdi_Hight: {
         type: Number,
-        required: true
     },
     Key_Room: {
         type: String,
-        required: true
     },
     Id_Build: {
         type: String
