@@ -7,11 +7,12 @@ var fs = require('fs');
 
 ImageRouter.route('/up').post(function (req, res) {
     let data = req.body
+    let name = new Date()
     let Id_Build = data.Id_Build
     const Id_Map = data.img.replace(/^data:([A-Za-z-+/]+);base64,/, '');
-    // fs.writeFile("./uploads/" + name.getSeconds() + "." + "png", base64Data2, "base64", function (err) {
-    //     // console.log(err); // writes out file without error, but it's not a valid image
-    // });
+    fs.writeFile("./uploads/" + name.getTime() + "." + "png", Id_Map, "base64", function (err) {
+        // console.log(err); // writes out file without error, but it's not a valid image
+    });
     console.log(Id_Map.length);
 
     const image = new ImageModel({ Id_Map, Id_Build });
@@ -24,10 +25,27 @@ ImageRouter.route('/up').post(function (req, res) {
     // console.log(data.img)
 });
 
-// ImageRouter.route('/show').get(function (req, res) {
-//     res.sendFile(__dirname + '/testcode');
+ImageRouter.route('/picmap_list').get(function(req, res){
+    ImageModel.find(function(err, image){
+        if(err){
+            console.log(err);
+        }
+        else{
+            res.json(image);
+        }
+    });
+});
 
-// });
+ImageRouter.route('/picmap/:id').get(function (req, res) {
+    ImageModel.findById(req.params.id, function (err, image) {
+        if (err) {
+            console.log(err);
+        }
+        else {
+            res.json(image);
+        }
+    });
+});
 
 
 
