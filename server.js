@@ -16,6 +16,7 @@ const BuildingRouter = require('./routes/BuildingRouter')
 const SenserRouter = require('./routes/SenserRouter')
 const DHTRouter = require('./routes/DHTRouter')
 const AuthorizeRouter = require('./routes/AuthorizeRouter')
+const ImageRouter = require('./routes/ImageRouter')
 
 const DHTModel = require('./model/DHTModel');
 const WarnModel = require('./model/WarnSenserModel');
@@ -25,6 +26,7 @@ const AuthorizeModel = require('./model/AuthorizeModel')
 const LocationModel = require('./model/LocationModel');
 const BuildingModel = require('./model/BuildingModel');
 const UserModel = require('./model/UserModel')
+const ImageModel = require('./model/ImageModel')
 
 //-->> start senser 
 var mongojs = require('mongojs')
@@ -59,6 +61,7 @@ app.use('/build', BuildingRouter);
 app.use('/sensers', SenserRouter);
 app.use('/dht', DHTRouter);
 app.use('/authorize', AuthorizeRouter)
+app.use('/imageupload', ImageRouter)
 
 //-->> control read write senser
 app.get('/write/:data', function (req, res) {
