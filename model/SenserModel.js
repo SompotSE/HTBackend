@@ -26,12 +26,15 @@ const SenserSchema = new Schema({
     Id_Build: {
         type: String
     },
+    Id_Map: {
+        type: String
+    },
     date: {
         type: Date,
         default: Date.now
     }
-},{
-    collection: 'sensers'
-});
+}, {
+        collection: 'sensers'
+    });
 
 module.exports = mongoose.model('sensers', SenserSchema);

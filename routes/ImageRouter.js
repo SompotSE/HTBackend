@@ -9,7 +9,8 @@ ImageRouter.route('/up').post(function (req, res) {
     let data = req.body
     let name = new Date()
     let Id_Build = data.Id_Build
-    const Id_Map = data.img.replace(/^data:([A-Za-z-+/]+);base64,/, '');
+    // const Id_Map = data.img.replace(/^data:([A-Za-z-+/]+);base64,/, '');
+    const Id_Map = data.img
     fs.writeFile("./uploads/" + name.getTime() + "." + "png", Id_Map, "base64", function (err) {
         // console.log(err); // writes out file without error, but it's not a valid image
     });
@@ -36,8 +37,8 @@ ImageRouter.route('/picmap_list').get(function(req, res){
     });
 });
 
-ImageRouter.route('/picmap/:id').get(function (req, res) {
-    ImageModel.findById(req.params.id, function (err, image) {
+ImageRouter.route('/picmap/:idmap').get(function (req, res) {
+    ImageModel.findById(req.params.idmap, function (err, image) {
         if (err) {
             console.log(err);
         }
