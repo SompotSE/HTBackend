@@ -4,6 +4,7 @@ const LocationRouter = express.Router();
 
 const LocationModel = require('../model/LocationModel');
 const BuildingModel = require('../model/BuildingModel');
+const ImageModel = require('../model/ImageModel');
 const SenserModel = require('../model/SenserModel');
 const AuthorizeModel = require('../model/AuthorizeModel');
 
@@ -72,62 +73,80 @@ LocationRouter.route('/Removelocation/:id').post(function (req, res) {
                         var id_loca = build[i].Id_Loca;
                         if (id_loca === req.params.id) 
                         {
-                            BuildingModel.findByIdAndDelete(build[i]._id, function(err, build1){
+                            BuildingModel.findByIdAndDelete(build[i]._id, function (err, build1) {
                                 if (err) {
                                     res.send(err);
-                                }
-                                else
-                                {
-                                    SenserModel.find(function (err, senser){
+                                } else {
+                                    ImageModel.find(function (err, image){
                                         if (err) {
                                             console.log(err);
                                         }
                                         else {
-                                            for(let z = 0; z < senser.length; z++)
+                                            for(let x = 0; x < image.length; x++)
                                             {
-                                                var id_build = senser[z].Id_Build;
-                                                // console.log(id_build)
-                                                // console.log(build[i]._id)
+                                                var id_build = image[x].Id_Build;
                                                 if(id_build == build[i]._id)
                                                 {
-                                                    // console.log(senser[z]._id)
-                                                    SenserModel.findByIdAndDelete(senser[z]._id, function(err, senser1){
+                                                    ImageModel.findByIdAndDelete(image[x]._id, function(err, image1){
                                                         if (err) {
                                                             res.send(err);
                                                         }
                                                         else
                                                         {
-                                                            AuthorizeModel.find(function (err, authorize){
-                                                                if(err){
+                                                            SenserModel.find(function (err, senser){
+                                                                if (err) {
                                                                     console.log(err);
                                                                 }
                                                                 else {
-                                                                    for(let y = 0 ; y < authorize.length; y++)
+                                                                    for(let z = 0; z < senser.length; z++)
                                                                     {
-                                                                        var key = authorize[y].Key_Room;
-                                                                        if(key == senser[z].Key_Room)
+                                                                        var id_map = senser[z].Id_Map;
+                                                                        if(id_map == image[x]._id)
                                                                         {
-                                                                            AuthorizeModel.findByIdAndDelete(authorize[y]._id, function(err, authorize1){
+                                                                            SenserModel.findByIdAndDelete(senser[z]._id, function(err, senser1){
                                                                                 if (err) {
                                                                                     res.send(err);
                                                                                 }
                                                                                 else
                                                                                 {
-                                                                                    console.log('Delete Authorize in this building')
+                                                                                    AuthorizeModel.find(function (err, authorize){
+                                                                                        if(err){
+                                                                                            console.log(err);
+                                                                                        }
+                                                                                        else {
+                                                                                            for(let y = 0 ; y < authorize.length; y++)
+                                                                                            {
+                                                                                                var key = authorize[y].Key_Room;
+                                                                                                if(key == senser[z].Key_Room)
+                                                                                                {
+                                                                                                    AuthorizeModel.findByIdAndDelete(authorize[y]._id, function(err, authorize1){
+                                                                                                        if (err) {
+                                                                                                            res.send(err);
+                                                                                                        }
+                                                                                                        else
+                                                                                                        {
+                                                                                                            console.log('Delete Authorize in this Location')
+                                                                                                        }
+                                                                                                    });
+                                                                                                }
+                                                                                            }
+                                                                                        }
+                                                                                    });
+                                                                                    console.log('Delete Senser in this Location')
                                                                                 }
                                                                             });
                                                                         }
                                                                     }
                                                                 }
                                                             });
-                                                            console.log('Delete Senser in this building')
+                                                            console.log('Delete Map in this Location')
                                                         }
                                                     });
                                                 }
                                             }
                                         }
                                     });
-                                    console.log('Delete building in this location')
+                                    console.log('Delete Build in this Location')
                                 }
                             });
                         }

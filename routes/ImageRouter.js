@@ -2,6 +2,8 @@ const express = require('express');
 const app = express();
 const ImageRouter = express.Router();
 const ImageModel = require('../model/ImageModel');
+const SenserModel = require('../model/SenserModel');
+const AuthorizeModel = require('../model/AuthorizeModel');
 
 var fs = require('fs');
 
@@ -44,6 +46,65 @@ ImageRouter.route('/picmap/:idmap').get(function (req, res) {
         }
         else {
             res.json(image);
+        }
+    });
+});
+
+ImageRouter.route('/Removemap/:id').post(function (req, res){
+    ImageModel.findByIdAndDelete(req.params.id, function (err, map){
+        if(err){
+            res.send(err);
+        } else {
+            SenserModel.find(function (err, senser){
+                if (err) {
+                    console.log(err);
+                }
+                else {
+                    for(let z = 0; z < senser.length; z++)
+                    {
+                        var id_map = senser[z].Id_Map;
+                        // console.log(id_build)
+                        if(id_map == req.params.id)
+                        {
+                            // console.log(senser[z]._id)
+                            SenserModel.findByIdAndDelete(senser[z]._id, function(err, senser1){
+                                if (err) {
+                                    res.send(err);
+                                }
+                                else
+                                {
+                                    AuthorizeModel.find(function (err, authorize){
+                                        if(err){
+                                            console.log(err);
+                                        }
+                                        else {
+                                            for(let i = 0 ; i < authorize.length; i++)
+                                            {
+                                                var key = authorize[i].Key_Room;
+                                                if(key == senser[z].Key_Room)
+                                                {
+                                                    AuthorizeModel.findByIdAndDelete(authorize[i]._id, function(err, authorize1){
+                                                        if (err) {
+                                                            res.send(err);
+                                                        }
+                                                        else
+                                                        {
+                                                            console.log('Delete Authorize in this Map')
+                                                        }
+                                                    });
+                                                }
+                                            }
+                                        }
+                                    });
+                                    console.log('Delete Senser in this Map')
+                                }
+                            });
+                        }
+                    }
+                }
+            });
+            res.json("Map has been Deleted")
+            console.log('send it')
         }
     });
 });
