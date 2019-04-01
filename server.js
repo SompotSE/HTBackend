@@ -48,7 +48,7 @@ mongoose.connect(config.DB, { useNewUrlParser: true }).then(
 
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json({limit : '50mb'}));
+app.use(bodyParser.json({ limit: '50mb' }));
 app.use(
     bodyParser.urlencoded({
         extended: false
@@ -200,7 +200,7 @@ function writeDHTtoMongo(_saveT, _saveH, _saveMac, res) {
                                 const WarnTH = new WarnTempHumidModel(warn);
                                 WarnTH.save()
                                     .then(TH => {
-                                        console.log('warn dht')
+                                        //console.log('warn dht')
                                     })
                                     .catch(err => {
                                         console.log(err)
@@ -218,7 +218,7 @@ function writeDHTtoMongo(_saveT, _saveH, _saveMac, res) {
                                 const WarnTH = new WarnTempHumidModel(warn);
                                 WarnTH.save()
                                     .then(TH => {
-                                        console.log('warn dht')
+                                        //console.log('warn dht')
                                     })
                                     .catch(err => {
                                         console.log(err)
@@ -237,7 +237,7 @@ function writeDHTtoMongo(_saveT, _saveH, _saveMac, res) {
                                 const WarnTH = new WarnTempHumidModel(warn);
                                 WarnTH.save()
                                     .then(TH => {
-                                        console.log('warn dht')
+                                        //console.log('warn dht')
                                     })
                                     .catch(err => {
                                         console.log(err)
@@ -255,7 +255,7 @@ function writeDHTtoMongo(_saveT, _saveH, _saveMac, res) {
                                 const WarnTH = new WarnTempHumidModel(warn);
                                 WarnTH.save()
                                     .then(TH => {
-                                        console.log('warn dht')
+                                        //console.log('warn dht')
                                     })
                                     .catch(err => {
                                         console.log(err)
@@ -265,96 +265,101 @@ function writeDHTtoMongo(_saveT, _saveH, _saveMac, res) {
                         }
                     }
 
-                    show1 = [];
-                    show_num1 = 0;
-                    SenserModel.find(function (err, senser) {
-                        if (err) {
-                            console.log(err);
-                        }
-                        else {
-                            for (let i = 0; i < senser.length; i++) {
-                                BuildingModel.find(function (err, build) {
-                                    if (err) {
-                                        console.log(err);
-                                    }
-                                    else {
-                                        for (let y = 0; y < build.length; y++) {
-                                            // console.log(senser[i].Id_Build)
-                                            // console.log(build[y]._id)
-                                            if (senser[i].Id_Build == build[y]._id) {
-                                                LocationModel.find(function (err, loca) {
-                                                    if (err) {
-                                                        console.log(err);
-                                                    }
-                                                    else {
-                                                        //console.log(build[y].Id_Loca)
-                                                        for (let z = 0; z < loca.length; z++) {
-                                                            if (build[y].Id_Loca == loca[z]._id) {
-                                                                if (_saveMac == senser[i].Macaddress) {
-                                                                    show1[show_num1] = {
-                                                                        Name_Lo: loca[z].Name_Lo,
-                                                                        Name_Build: build[y].Name_Build,
-                                                                        Position: senser[i].Position,
-                                                                        Temp_Low: senser[i].Temp_Low,
-                                                                        Temp_Hight: senser[i].Temp_Hight,
-                                                                        Humdi_Low: senser[i].Humdi_Low,
-                                                                        Humdi_Hight: senser[i].Humdi_Hight,
-                                                                        Macaddress: senser[i].Macaddress,
-                                                                        Key_Room: senser[i].Key_Room
-                                                                    }
-                                                                    show_num1 = show_num1 + 1;
-                                                                    // console.log(show_num)
-                                                                    // console.log(show[0].Key_Room)
-                                                                    AuthorizeModel.find(function (err, authorize) {
-                                                                        if (err) {
-                                                                            console.log(err);
+                    if (massT !== 'Null' || massH !== 'Null') {
+                        // show1 = [];
+                        // show_num1 = 0;
+                        //console.log(show1)
+                        SenserModel.find(function (err, senser) {
+                            if (err) {
+                                console.log(err);
+                            }
+                            else {
+                                for (let i = 0; i < senser.length; i++) {
+                                    BuildingModel.find(function (err, build) {
+                                        if (err) {
+                                            console.log(err);
+                                        }
+                                        else {
+                                            for (let y = 0; y < build.length; y++) {
+                                                // console.log(senser[i].Id_Build)
+                                                // console.log(build[y]._id)
+                                                if (senser[i].Id_Build == build[y]._id) {
+                                                    LocationModel.find(function (err, loca) {
+                                                        if (err) {
+                                                            console.log(err);
+                                                        }
+                                                        else {
+                                                            //console.log(build[y].Id_Loca)
+                                                            for (let z = 0; z < loca.length; z++) {
+                                                                if (build[y].Id_Loca == loca[z]._id) {
+                                                                    if (_saveMac == senser[i].Macaddress) {
+                                                                        show1 = [];
+                                                                        show_num1 = 0;
+                                                                        show1[show_num1] = {
+                                                                            Name_Lo: loca[z].Name_Lo,
+                                                                            Name_Build: build[y].Name_Build,
+                                                                            Position: senser[i].Position,
+                                                                            Temp_Low: senser[i].Temp_Low,
+                                                                            Temp_Hight: senser[i].Temp_Hight,
+                                                                            Humdi_Low: senser[i].Humdi_Low,
+                                                                            Humdi_Hight: senser[i].Humdi_Hight,
+                                                                            Macaddress: senser[i].Macaddress,
+                                                                            Key_Room: senser[i].Key_Room
                                                                         }
-                                                                        else {
-                                                                            for (let a = 0; a < authorize.length; a++) {
-                                                                                if (show1[0].Key_Room == authorize[a].Key_Room) {
-                                                                                    UserModel.find(function (err, user) {
-                                                                                        if (err) {
-                                                                                            console.log(err);
-                                                                                        }
-                                                                                        else {
-                                                                                            
-                                                                                            for (let b = 0; b < user.length; b++) {
-                                                                                                if (authorize[a].Id_User == user[b]._id) {
-                                                                                                    if(massT == "อุณหภูมิต่ำกว่าค่าที่กำหนด" || massT == "อุณหภูมิสูงกว่าค่าที่กำหนด")
-                                                                                                    {
-                                                                                                        //
-                                                                                                        NotiLineTemp(user[b].Id_line, show1[0].Name_Lo, show1[0].Name_Build, show1[0].Position, show1[0].Temp_Hight, show1[0].Temp_Low, _saveT,  massT)
-                                                                                                    } 
-                                                                                                    if(massH == "ความชื้นต่ำกว่าค่าที่กำหนด" || massH == "ความชื้นสูงกว่าค่าที่กำหนด")
-                                                                                                    {
-                                                                                                        NotiLineHumi(user[b].Id_line, show1[0].Name_Lo, show1[0].Name_Build, show1[0].Position, show1[0].Humdi_Hight, show1[0].Humdi_Low, _saveH,  massH)
+                                                                        show_num1 = show_num1 + 1;
+                                                                        // console.log(show_num)
+                                                                        // console.log(show[0].Key_Room)
+                                                                        AuthorizeModel.find(function (err, authorize) {
+                                                                            if (err) {
+                                                                                console.log(err);
+                                                                            }
+                                                                            else {
+                                                                                for (let a = 0; a < authorize.length; a++) {
+                                                                                    //console.log(show1)
+                                                                                    if (show1[0].Key_Room == authorize[a].Key_Room) {
+                                                                                        UserModel.find(function (err, user) {
+                                                                                            if (err) {
+                                                                                                console.log(err);
+                                                                                            }
+                                                                                            else {
+                                                                                                console.log(show1[0])
+                                                                                                console.log(show1.length)
+                                                                                                for (let b = 0; b < user.length; b++) {
+                                                                                                    if (authorize[a].Id_User == user[b]._id) {
+                                                                                                        if (massT == "อุณหภูมิต่ำกว่าค่าที่กำหนด" || massT == "อุณหภูมิสูงกว่าค่าที่กำหนด") {
+                                                                                                            console.log("Error Temp")
+                                                                                                            NotiLineTemp(user[b].Id_line, show1[0].Name_Lo, show1[0].Name_Build, show1[0].Position, show1[0].Temp_Hight, show1[0].Temp_Low, _saveT, massT)
+                                                                                                        }
+                                                                                                        if (massH == "ความชื้นต่ำกว่าค่าที่กำหนด" || massH == "ความชื้นสูงกว่าค่าที่กำหนด") {
+                                                                                                            console.log("Error Humi")
+                                                                                                            NotiLineHumi(user[b].Id_line, show1[0].Name_Lo, show1[0].Name_Build, show1[0].Position, show1[0].Humdi_Hight, show1[0].Humdi_Low, _saveH, massH)
+                                                                                                        }
+                                                                                                        // console.log(massH)
+                                                                                                        // id_line[line_num] = user[b].id_line
+                                                                                                        // line_num = line_num + 1
+                                                                                                        //console.log(user[b].Id_line)
+                                                                                                        //NotiLineSenser(user[b].Id_line, show1[0].Name_Lo, show1[0].Name_Build, show1[0].Position, _Message)
                                                                                                     }
-                                                                                                    // console.log(massT)
-                                                                                                    // console.log(massH)
-                                                                                                    // id_line[line_num] = user[b].id_line
-                                                                                                    // line_num = line_num + 1
-                                                                                                    //console.log(user[b].Id_line)
-                                                                                                    //NotiLineSenser(user[b].Id_line, show1[0].Name_Lo, show1[0].Name_Build, show1[0].Position, _Message)
                                                                                                 }
                                                                                             }
-                                                                                        }
-                                                                                    });
+                                                                                        });
+                                                                                    }
                                                                                 }
                                                                             }
-                                                                        }
-                                                                    });
+                                                                        });
+                                                                    }
                                                                 }
                                                             }
                                                         }
-                                                    }
-                                                });
+                                                    });
+                                                }
                                             }
                                         }
-                                    }
-                                });
+                                    });
+                                }
                             }
-                        }
-                    });
+                        });
+                    }
                 }
             }
         });
@@ -366,7 +371,7 @@ function writeDHTtoMongo(_saveT, _saveH, _saveMac, res) {
         const DHT = new DHTModel(data);
         DHT.save()
             .then(DHT => {
-                console.log('record dht data ok')
+                console.log('record dht data ok' + data.mac)
                 res.send('record dht data ok')
             })
             .catch(err => {
@@ -395,7 +400,7 @@ function warnDHTtoMongo(_savemassWarn, _savemacWarn, res) {
         const Warn = new WarnModel(data);
         Warn.save()
             .then(Warn => {
-                console.log('record warn data ok')
+                //console.log('record warn data ok')
                 res.send('record warn data ok')
             })
             .catch(err => {
@@ -530,7 +535,7 @@ function sentNotiLineSenser(_id, loca, build, position, Mass, res) {
             headers: headers,
             body: body
         }, (err, res, body) => {
-            console.log('status = ' + res.statusCode);
+            //console.log('status = ' + res.statusCode);
         });
     })
 }
@@ -566,7 +571,7 @@ function sentNotiLineTemp(_id, loca, build, position, max_t, min_t, temp, Mass, 
             headers: headers,
             body: body
         }, (err, res, body) => {
-            console.log('status = ' + res.statusCode);
+            //console.log('status = ' + res.statusCode);
         });
     })
 }
@@ -602,7 +607,7 @@ function sentNotiLineHumi(_id, loca, build, position, max_h, min_h, humi, Mass, 
             headers: headers,
             body: body
         }, (err, res, body) => {
-            console.log('status = ' + res.statusCode);
+            //console.log('status = ' + res.statusCode);
         });
     })
 }
