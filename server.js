@@ -34,7 +34,7 @@ var Promise = require('promise')
 var myiotdb = mongojs('HT_Data')
 var dhtdb = mongojs('HT_Data')
 var devid, data, datasize, dataset = ''
-var t, h, mac, macWarn, massWarn
+var t, h, mac, macWarn, massWarn, pm1, pm2, pm4, pm10, nc0, nc1, nc2, nc4, nc10
 var show = [], show_num = 0;
 var show1 = [], show_num1 = 0;
 // var id_line = [], line_num = 0;
@@ -79,13 +79,22 @@ app.get('/read/:datasize', function (req, res) {
 })
 
 /* For DHT write */
-app.get('/writedht/:t/:h/:mac', function (req, res) {
+app.get('/writedht/:t/:h/:pm1/:pm2/:pm4/:pm10/:nc0/:nc1/:nc2/:nc4/:nc10/:mac', function (req, res) {
     var strParseWriteReq = JSON.stringify(req.params)
     var strWriteReq = JSON.parse(strParseWriteReq)
     t = strWriteReq.t
     h = strWriteReq.h
+    pm1 = strWriteReq.pm1
+    pm2 = strWriteReq.pm2
+    pm4 = strWriteReq.pm4
+    pm10= strWriteReq.pm10
+    nc0 = strWriteReq.nc0
+    nc1 = strWriteReq.nc1
+    nc2 = strWriteReq.nc2
+    nc4 = strWriteReq.nc4
+    nc10= strWriteReq.nc10
     mac = strWriteReq.mac
-    writeDHT(t, h, mac, res)
+    writeDHT(t, h, pm1, pm2, pm4, pm10, nc0, nc1, nc2, nc4, nc10, mac, res)
 })
 
 /* For warn Senser */
@@ -153,8 +162,8 @@ function readDataFromMongo(_readdatasize, res) {
     })
 }
 
-async function writeDHT(_t, _h, mac, res) {
-    await writeDHTtoMongo(_t, _h, mac, res)
+async function writeDHT(_t, _h, pm1, pm2, pm4, pm10, nc0, nc1, nc2, nc4, nc10, mac, res) {
+    await writeDHTtoMongo(_t, _h, pm1, pm2, pm4, pm10, nc0, nc1, nc2, nc4, nc10, mac, res)
 }
 
 // function writeDHTtoMongo(_saveT, _saveH, _saveMac, res) {
@@ -177,7 +186,7 @@ async function writeDHT(_t, _h, mac, res) {
 //     })
 // }
 
-function writeDHTtoMongo(_saveT, _saveH, _saveMac, res) {
+function writeDHTtoMongo(_saveT, _saveH, _savepm1, _savepm2, _savepm4, _savepm10, _savenc0, _savenc1, _savenc2, _savenc4, _savenc10, _saveMac, res) {
     return new Promise(function (resolve, reject) {
         //var dhtwritecollection = dhtdb.collection('dht')
         SenserModel.find(function (err, senser) {
@@ -366,6 +375,15 @@ function writeDHTtoMongo(_saveT, _saveH, _saveMac, res) {
         const data = {
             t: Number(_saveT),
             h: Number(_saveH),
+            pm1: Number(_savepm1), 
+            pm2: Number(_savepm2), 
+            pm4: Number(_savepm4), 
+            pm10:Number(_savepm10), 
+            nc0: Number(_savenc0), 
+            nc1: Number(_savenc1), 
+            nc2: Number(_savenc2), 
+            nc4: Number(_savenc4), 
+            nc10:Number(_savenc10),
             mac: _saveMac
         }
         const DHT = new DHTModel(data);

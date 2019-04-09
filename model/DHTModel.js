@@ -10,6 +10,42 @@ const DHTSchema = new Schema({
         type: Number,
         required: true
     },
+    pm1: {
+        type: Number,
+        required: true
+    },
+    pm2: {
+        type: Number,
+        required: true
+    },
+    pm4: {
+        type: Number,
+        required: true
+    },
+    pm10: {
+        type: Number,
+        required: true
+    },
+    nc0: {
+        type: Number,
+        required: true
+    },
+    nc1: {
+        type: Number,
+        required: true
+    },
+    nc2: {
+        type: Number,
+        required: true
+    },
+    nc4: {
+        type: Number,
+        required: true
+    },
+    nc10: {
+        type: Number,
+        required: true
+    },
     mac: {
         type: String,
         required: true
