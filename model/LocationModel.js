@@ -14,12 +14,18 @@ const LocationSchema = new Schema({
         type: String,
         required: true
     },
+    lat: {
+        type: String
+    },
+    lng: {
+        type: String
+    },
     date: {
         type: Date,
         default: Date.now
     }
-},{
-    collection: 'locations'
-});
+}, {
+        collection: 'locations'
+    });
 
 module.exports = mongoose.model('locations', LocationSchema);
