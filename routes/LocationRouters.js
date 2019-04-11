@@ -48,6 +48,8 @@ LocationRouter.route('/update/:id').post(function (req, res) {
         else
             location.Name_Lo = req.body.Name_Lo;
         location.Address = req.body.Address;
+        location.lat = req.body.lat;
+        location.lng = req.body.lng;
 
         location.save().then(location => {
             res.json('Updated!');
@@ -68,63 +70,52 @@ LocationRouter.route('/Removelocation/:id').post(function (req, res) {
                     console.log(err);
                 }
                 else {
-                    for (let i = 0; i < build.length; i++) 
-                    {
+                    for (let i = 0; i < build.length; i++) {
                         var id_loca = build[i].Id_Loca;
-                        if (id_loca === req.params.id) 
-                        {
+                        if (id_loca === req.params.id) {
                             BuildingModel.findByIdAndDelete(build[i]._id, function (err, build1) {
                                 if (err) {
                                     res.send(err);
                                 } else {
-                                    ImageModel.find(function (err, image){
+                                    ImageModel.find(function (err, image) {
                                         if (err) {
                                             console.log(err);
                                         }
                                         else {
-                                            for(let x = 0; x < image.length; x++)
-                                            {
+                                            for (let x = 0; x < image.length; x++) {
                                                 var id_build = image[x].Id_Build;
-                                                if(id_build == build[i]._id)
-                                                {
-                                                    ImageModel.findByIdAndDelete(image[x]._id, function(err, image1){
+                                                if (id_build == build[i]._id) {
+                                                    ImageModel.findByIdAndDelete(image[x]._id, function (err, image1) {
                                                         if (err) {
                                                             res.send(err);
                                                         }
-                                                        else
-                                                        {
-                                                            SenserModel.find(function (err, senser){
+                                                        else {
+                                                            SenserModel.find(function (err, senser) {
                                                                 if (err) {
                                                                     console.log(err);
                                                                 }
                                                                 else {
-                                                                    for(let z = 0; z < senser.length; z++)
-                                                                    {
+                                                                    for (let z = 0; z < senser.length; z++) {
                                                                         var id_map = senser[z].Id_Map;
-                                                                        if(id_map == image[x]._id)
-                                                                        {
-                                                                            SenserModel.findByIdAndDelete(senser[z]._id, function(err, senser1){
+                                                                        if (id_map == image[x]._id) {
+                                                                            SenserModel.findByIdAndDelete(senser[z]._id, function (err, senser1) {
                                                                                 if (err) {
                                                                                     res.send(err);
                                                                                 }
-                                                                                else
-                                                                                {
-                                                                                    AuthorizeModel.find(function (err, authorize){
-                                                                                        if(err){
+                                                                                else {
+                                                                                    AuthorizeModel.find(function (err, authorize) {
+                                                                                        if (err) {
                                                                                             console.log(err);
                                                                                         }
                                                                                         else {
-                                                                                            for(let y = 0 ; y < authorize.length; y++)
-                                                                                            {
+                                                                                            for (let y = 0; y < authorize.length; y++) {
                                                                                                 var key = authorize[y].Key_Room;
-                                                                                                if(key == senser[z].Key_Room)
-                                                                                                {
-                                                                                                    AuthorizeModel.findByIdAndDelete(authorize[y]._id, function(err, authorize1){
+                                                                                                if (key == senser[z].Key_Room) {
+                                                                                                    AuthorizeModel.findByIdAndDelete(authorize[y]._id, function (err, authorize1) {
                                                                                                         if (err) {
                                                                                                             res.send(err);
                                                                                                         }
-                                                                                                        else
-                                                                                                        {
+                                                                                                        else {
                                                                                                             console.log('Delete Authorize in this Location')
                                                                                                         }
                                                                                                     });
@@ -151,7 +142,7 @@ LocationRouter.route('/Removelocation/:id').post(function (req, res) {
                             });
                         }
                     }
-                    
+
                 }
             });
             res.json("Location has been Deleted")
